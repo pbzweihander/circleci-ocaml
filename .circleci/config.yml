@@ -1,0 +1,25 @@
+version: 2
+
+docker_login: &docker_login
+  run:
+    name: authentication
+    command: |
+      docker --version
+      docker-compose --version
+      docker login -u "$DOCKER_USER" -p "$DOCKER_PASS"
+
+workflows:
+  version: 2
+  flow:
+    jobs:
+      - publish
+
+jobs:
+  publish:
+    machine:
+      enabled: true
+      docker_layer_caching: true
+    steps:
+      - checkout
+      - <<: *docker_login
+      - run: make push
